@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 8081;
 const admin = require("./routes/admin");
+const usuarios = require("./routes/usuario");
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -14,6 +15,9 @@ require('./models/Postagem');
 const Postagem = mongoose.model('postagens');
 require('./models/Categoria');
 const Categoria = mongoose.model('categorias');
+
+const passport = require('passport');
+require('./config/auth')(passport);
 
 //-------------------------------------------------------------------------------------------------//
 //configurações
@@ -25,6 +29,11 @@ app.use(session({
     saveUninitialized: true
 }));
 
+//Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+//Flash
 app.use(flash());
 
 //-------------------------------------------------------------------------------------------------//
@@ -32,6 +41,8 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash("success_msg");
     res.locals.error_msg = req.flash("error_msg");
+    res.locals.error = req.flash("error");
+    res.locals.user = req.user || null;
     next();
 });
 
@@ -42,10 +53,12 @@ app.use(bodyParser.json());
 
 //-------------------------------------------------------------------------------------------------//
 //Handlebars
+const hbsHelpers = require('./helpers/handlebars');
 app.engine("handlebars", engine({
     defaultLayout: "main",
     layoutsDir: path.join(__dirname, "views", "layouts"), // pasta do main.handlebars
-    partialsDir: path.join(__dirname, "views", "partials") // pasta das partials
+    partialsDir: path.join(__dirname, "views", "partials"), // pasta das partials
+    helpers: hbsHelpers
 }));
 app.set("view engine", "handlebars");
 app.set("views", "./views"); 
@@ -128,6 +141,9 @@ app.get('/categorias/:slug', (req, res) => {
 
 //-------------------------------------------------------------------------------------------------//
 app.use('/admin', admin);
+
+//-------------------------------------------------------------------------------------------------//
+app.use('/usuarios', usuarios);
 
 //-------------------------------------------------------------------------------------------------//
 //Outros
