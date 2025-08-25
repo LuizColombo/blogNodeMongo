@@ -1,0 +1,22 @@
+{{#each postagens}}
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title">{{titulo}}</h5>
+        <hr>
+        <p class="card-text"><strong>{{descricao}}</strong></p>
+        <p class="card-text">{{conteudo}}</p>
+        <a href="/postagem/{{slug}}"><button class="btn btn-primary">Ler mais</button></a>
+        <hr>
+        <small class="text-muted">Criado em {{data}}</small>
+    </div>
+</div>
+
+{{else}}
+<div class="card mt-4">
+    <div class="card-body">
+        <h1>Nenhuma postagem encontrada para esta categoria!</h1>
+        <a href="/categorias"><button class="btn btn-primary">Voltar para a página de categorias</button></a>
+    </div>
+</div>
+
+{{/each}}

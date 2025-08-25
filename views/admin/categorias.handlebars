@@ -1,0 +1,27 @@
+<div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+    <h5 class="card-title mb-4">Lista de Categorias</h5>
+    <button class="btn btn-primary" onclick="location.href='/admin/categorias/add'">Nova Categoria</button>
+</div>
+
+
+{{#each categorias}}
+    <div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+        <div class="card-body">
+            <h5 class="card-title">{{nome}}</h5>
+            <p class="card-text">{{slug}}</p>
+            <a href="/admin/categorias/edit/{{_id}}" class="btn btn-secondary">Editar</a>
+            <form action="/admin/categorias/deletar" method="POST">
+                <input type="hidden" name="id" value="{{_id}}">
+                <button type="submit" class="btn btn-danger mt-2">Deletar</button>
+            </form>
+        </div>
+    </div>
+
+{{else}}
+    <div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+        <div class="card-body">
+            <h5 class="card-title">Nenhum Categoria Registrada!</h5>
+        </div>
+    </div>
+
+{{/each}}

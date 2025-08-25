@@ -1,0 +1,78 @@
+{{#each erros}}
+  <div class="alert alert-danger" role="alert">
+    {{texto}}
+  </div>
+{{else}}
+
+{{/each}}
+
+<div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+  <div class="card-body">
+    <h5 class="card-title mb-4">Adicionar Nova Postagem</h5>
+    <form action="/admin/postagens/nova" method="post">
+
+      <div class="mb-3">
+        <label for="nome" class="form-label">Título da Postagem</label>
+        <input
+          type="text"
+          class="form-control"
+          id="titulo"
+          name="titulo"
+          placeholder="Título da Postagem"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="slug" class="form-label">Slug</label>
+        <input
+          type="text"
+          class="form-control"
+          id="slug"
+          name="slug"
+          placeholder="Digite o slug da postagem"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="slug" class="form-label">Descrição</label>
+        <input
+          type="text"
+          class="form-control"
+          id="descricao"
+          name="descricao"
+          placeholder="Descrição da postagem"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="slug" class="form-label">Conteúdo</label>
+        <textarea
+          class="form-control"
+          id="conteudo"
+          name="conteudo"
+          rows="5"
+          placeholder="Conteúdo da postagem"
+          required
+        ></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="slug" class="form-label">Categoria</label>
+        <select class="form-select" id="categoria" name="categoria" required>
+          <option value="">Selecione uma categoria</option>
+          {{#each categorias}}
+            <option value="{{_id}}">{{nome}}</option>
+
+          {{else}}
+            <option value="0">Nenhuma categoria cadastrada</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Criar Postagem</button>
+    </form>
+  </div>
+</div>

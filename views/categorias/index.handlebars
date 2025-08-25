@@ -1,0 +1,15 @@
+<h4 class="mb-4">Categorias</h4>
+
+<div class="row">
+  {{#each categorias}}
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm h-100 border-0">
+        <div class="card-body text-center">
+          <a href="/categorias/{{slug}}" class="text-decoration-none text-dark">
+            <h5 class="card-title">{{nome}}</h5>
+          </a>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>

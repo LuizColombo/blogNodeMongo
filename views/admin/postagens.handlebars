@@ -1,0 +1,31 @@
+<div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+    <h5 class="card-title mb-4">Lista de Postagens</h5>
+    <button class="btn btn-primary" onclick="location.href='/admin/postagens/add'">Nova Postagem</button>
+</div>
+
+{{#each postagens}}
+    <div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+        <div class="card-body">
+            <h5 class="card-title">{{titulo}}</h5>
+            <p class="card-text">{{slug}}</p>
+            <p class="card-text">{{descricao}}</p>
+            <p class="card-text">{{conteudo}}</p>
+            <p class="card-text">{{data}}</p>
+            <p class="card-text">Categoria: {{categoria.nome}}</p>
+
+            <a href="/admin/postagens/edit/{{_id}}" class="btn btn-secondary">Editar</a>
+            <form action="/admin/postagens/deletar" method="POST">
+                <input type="hidden" name="id" value="{{_id}}">
+                <button type="submit" class="btn btn-danger mt-2">Deletar</button>
+            </form>
+        </div>
+    </div>
+
+{{else}}
+    <div class="card mt-4 shadow-sm" style="max-width: 600px; margin:auto;">
+        <div class="card-body">
+            <h5 class="card-title">Nenhuma Postagem Registrada!</h5>
+        </div>
+    </div>
+
+{{/each}}
