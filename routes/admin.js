@@ -9,6 +9,12 @@ const Postagem = mongoose.model('postagens');
 
 const { isAdmin } = require('../helpers/isAdmin');
 
+require('../models/Usuarios');
+const Usuario = mongoose.model('usuarios');
+
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+
 //Rotas
 
 //-------------------------------------------------------------------------------------------------//
@@ -232,6 +238,118 @@ router.post('/postagens/edit', isAdmin, (req, res) => {
     });
 });
 //-------------------------------------------------------------------------------------------------//
+router.get('/usuarios', isAdmin, (req, res) => {
+    Usuario.find().sort({nome: 'desc'}).lean().then((usuarios) => {
+        res.render('./admin/usuarios', { usuarios: usuarios })
+        }).catch((err) => {
+            req.flash('error_msg', 'Houve um erro ao listar os usuários')
+            res.redirect('/admin');
+        });
+});
+//-------------------------------------------------------------------------------------------------//
+router.get('/usuarios/editar/:id', isAdmin, (req, res) => {
+    Usuario.findOne({_id: req.params.id}).lean().then((usuario) => {
+        res.render('./admin/usuariosedit', {usuario: usuario});
+    }).catch((err) => {
+        req.flash('error_msg', 'Este usuário não existe');
+        res.redirect('/admin/usuarios');
+    });
+});
+//-------------------------------------------------------------------------------------------------//
+router.post('/usuarios/editar', isAdmin, (req, res) => {
+    Usuario.findOne({_id: req.body.id}).then((usuario) => {
+        usuario.nome = req.body.nome;
+        usuario.email = req.body.email;
+        usuario.roleAdmin = req.body.roleAdmin ? 1 : 0;
+
+        return usuario.save();
+    }).then(() => {
+        req.flash('success_msg', 'Usuário editado com sucesso!');
+        res.redirect('/admin/usuarios');
+    }).catch((err) => {
+        req.flash('error_msg', 'Houve um erro ao editar o usuário: ' + err);
+        res.redirect('/admin/usuarios');
+    });
+});
+//-------------------------------------------------------------------------------------------------//
+router.post('/usuarios/deletar/:id', isAdmin, (req, res) => {
+    Usuario.deleteOne({_id: req.params.id}).then(() => {
+        req.flash('success_msg', 'Usuário deletado com sucesso!');
+        res.redirect('/admin/usuarios');
+    }).catch((err) => {
+        req.flash('error_msg', 'Houve um erro ao deletar o usuário');
+        res.redirect('/admin/usuarios');
+    });
+});
+//-------------------------------------------------------------------------------------------------//
+router.get('/usuarios/add', isAdmin, (req, res) => {
+    res.render('./admin/usuariosadd');
+});
+
+//-------------------------------------------------------------------------------------------------//
+router.post('/usuarios/add', (req, res) => {
+    var erros = [];
+
+    if(!req.body.nome || typeof req.body.nome == undefined || req.body.nome == null){
+        erros.push({texto: "Nome inválido"});
+    }
+    if(!req.body.email || typeof req.body.email == undefined || req.body.email == null){
+        erros.push({texto: "E-mail inválido"});
+    }
+    if(!req.body.senha || typeof req.body.senha == undefined || req.body.senha == null){
+        erros.push({texto: "Senha inválida"});
+    }
+    if(req.body.senha.length < 4){
+        erros.push({texto: "Senha muito curta"});
+    }
+    if(req.body.senha != req.body.senha2){
+        erros.push({texto: "As senhas são diferentes, tente novamente"});
+    }
+
+    if(erros.length > 0){
+        res.render('usuarios/registro', {erros: erros});
+    } else {
+        Usuario.findOne({email: req.body.email}).then((usuario) => {
+            if(usuario){
+                req.flash('error_msg', 'Já existe uma conta com esse e-mail no nosso sistema');
+                res.redirect('/usuarios/registro');
+            } else {
+                const novoUsuario = new Usuario({
+                    nome: req.body.nome,
+                    email: req.body.email,
+                    senha: req.body.senha,
+                    roleAdmin: req.body.roleAdmin ? 1 : 0
+                });
+
+                bcrypt.genSalt(10, (erro, salt) => {
+                    bcrypt.hash(novoUsuario.senha, salt, (erro, hash) => {
+                        if(erro){
+                            req.flash('error_msg', 'Houve um erro durante o salvamento do usuário');
+                            return res.redirect('/');
+                        }
+
+                        // Substitui a senha pelo hash
+                        novoUsuario.senha = hash;
+
+                        // Agora sim salva no banco
+                        novoUsuario.save().then(() => {
+                            req.flash('success_msg', 'Usuário criado com sucesso!');
+                            res.redirect('/');
+                        }).catch((err) => {
+                            req.flash('error_msg', 'Houve um erro ao criar o usuário, tente novamente!');
+                            res.redirect('/usuarios/registro');
+                        });
+                    });
+                });
+            }
+        }).catch((err) => {
+            req.flash('error_msg', 'Houve um erro interno!' + err);
+            res.redirect('/');
+        });
+    }
+});
+//-------------------------------------------------------------------------------------------------//
+
 module.exports = router;
 
 //-------------------------------------------------------------------------------------------------//
