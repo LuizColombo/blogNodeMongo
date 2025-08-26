@@ -1,0 +1,63 @@
+{{#if error}}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{error}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{{/if}}
+
+{{#if success_msg}}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{success_msg}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{{/if}}
+
+{{#if error_msg}}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{error_msg}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{{/if}}
+
+{{#if user}}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title mb-4 text-center">🔑 Redefinir Senha</h3>
+          <form action="/usuarios/redefinirSenha" method="POST">
+            <div class="mb-3">
+              <label for="senhaAtual" class="form-label">Senha Atual</label>
+              <input type="password" class="form-control" id="senhaAtual" name="senhaAtual" required>
+            </div>
+            <div class="mb-3">
+              <label for="novaSenha" class="form-label">Nova Senha</label>
+              <input type="password" class="form-control" id="novaSenha" name="novaSenha" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmarSenha" class="form-label">Confirmar Nova Senha</label>
+              <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{else}}
+<div class="container mt-5">
+  <div class="alert alert-warning text-center">
+    ⚠️ Você precisa estar logado para redefinir sua senha.
+  </div>
+</div>
+{{/if}}

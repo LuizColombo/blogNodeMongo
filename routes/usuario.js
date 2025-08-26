@@ -99,6 +99,66 @@ router.get('/logout', (req, res) => {
         res.redirect('/');
     });
 });
+//-------------------------------------------------------------------------------------------------//
+router.get('/redefinirSenha', (req, res) => {
+    res.render('usuarios/redefinirSenha');
+});
+
+//-------------------------------------------------------------------------------------------------//
+router.post('/redefinirSenha', async (req, res) => {
+    const { senhaAtual, novaSenha, confirmarSenha } = req.body;
+    const usuario = await Usuario.findById(req.user._id); // usuário logado via passport
+
+    let erros = [];
+
+    // validações básicas
+    if (!usuario) {
+        req.flash('error_msg', 'Você precisa estar logado para redefinir sua senha.');
+        return res.redirect('/usuarios/login');
+    }
+
+    if (!senhaAtual || !novaSenha || !confirmarSenha) {
+        erros.push({ texto: 'Preencha todos os campos.' });
+    }
+
+    if (novaSenha !== confirmarSenha) {
+        erros.push({ texto: 'A nova senha e a confirmação não conferem.' });
+    }
+
+    if (novaSenha.length < 6) {
+        erros.push({ texto: 'A senha deve ter pelo menos 6 caracteres.' });
+    }
+
+    if (erros.length > 0) {
+        return res.render('usuarios/redefinirSenha', { 
+            error_msg: erros.map(e => e.texto).join(' | ') 
+        });
+    }
+
+    try {
+        // verifica senha atual
+        const senhaConfere = await bcrypt.compare(senhaAtual, usuario.senha);
+        if (!senhaConfere) {
+            req.flash('error_msg', 'Senha atual incorreta.');
+            return res.redirect('/usuarios/redefinirSenha');
+        }
+
+        // gera hash da nova senha
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(novaSenha, salt);
+
+        // atualiza usuário
+        usuario.senha = hash;
+        await usuario.save();
+
+        req.flash('success_msg', 'Senha alterada com sucesso!');
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
+        req.flash('error_msg', 'Erro ao redefinir senha. Tente novamente.');
+        res.redirect('/usuarios/redefinirSenha');
+    }
+});
 
 //-------------------------------------------------------------------------------------------------//
 
