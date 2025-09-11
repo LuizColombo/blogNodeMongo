@@ -17,7 +17,7 @@ Principais objetivos:
 ---
 
 ## 🛠 Tecnologias usadas
-
+```text
 | Tecnologia | Uso no projeto |
 |---|---|
 | **Node.js** | Servidor backend |
@@ -26,9 +26,8 @@ Principais objetivos:
 | **Handlebars** | Template engine para renderizar as views |
 | **Docker** | Containerização para isolar dependências e ambiente |
 | Outras pastas úteis: | `routes`, `models`, `views`, etc. |
-
+```
 ---
-
 ## 📂 Estrutura do Projeto
 
 blogNodeMongo/
