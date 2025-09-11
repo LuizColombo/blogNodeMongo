@@ -29,7 +29,7 @@ Principais objetivos:
 ```
 ---
 ## 📂 Estrutura do Projeto
-
+```text
 blogNodeMongo/
 ├── app.js                # Ponto de entrada da aplicação
 ├── package.json          # Dependências e scripts
@@ -40,7 +40,7 @@ blogNodeMongo/
 ├── routes/               # Rotas da aplicação
 ├── views/                # Templates (Handlebars) para renderização de páginas
 └── .gitignore            # Arquivos/pastas ignorados pelo Git
-
+```
 🚀 Como executar localmente
 Pré-requisitos:
 
